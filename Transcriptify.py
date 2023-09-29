@@ -5,9 +5,6 @@ import openai
 API_KEY = st.secrets["openai"]["api_key"]
 openai.api_key = API_KEY
 
-# Check and display GPT-4 API connection statuses
-gpt4_api_status = "Connected" if check_gpt4_api(API_KEY) else "Not Connected"
-st.write(f"GPT-4 API Status: {gpt4_api_status}")
 
 def chunk_text(text, max_length=4000):
     chunks = []
