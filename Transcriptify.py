@@ -57,7 +57,7 @@ def main():
     # Model switcher
     model_choice = st.selectbox(
         "Choose the model:", 
-        ["gpt-4.0-turbo", "gpt-3.5-turbo"]
+        ["gpt-4", "gpt-3.5-turbo"]
     )
     
     uploaded_file = st.file_uploader("Upload a transcript text file", type=["txt"])
