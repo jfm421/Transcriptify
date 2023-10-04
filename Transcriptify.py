@@ -86,13 +86,10 @@ def main():
 
     uploaded_file = st.file_uploader("Upload a transcript text file", type=["txt"])
 
-    if st.button("Customize Prompts"):
-        toc_content = generate_toc_content(summarized_transcript, model_choice, progress_bar)
+    # Initialize these as None so they can be checked before being used
+    summarized_transcript = None
+    progress_bar = None
 
-        for section, text in toc_content.items():
-            st.subheader(section)
-            st.write(text)
-    
     if uploaded_file is not None:
         transcript = uploaded_file.read().decode()
         
@@ -100,17 +97,18 @@ def main():
         progress_bar = st.progress(0)
         
         chunked_transcript = chunk_text(transcript)
-        
         summarized_transcript = summarize_text(chunked_transcript, model_choice, progress_bar)
-        extracted_info = extract_themes_goals_challenges_painpoints(summarized_transcript, model_choice, progress_bar)
         
         st.subheader("Summarized Transcript")
         st.write(summarized_transcript)
-        
-        for key, value in extracted_info.items():
-            st.subheader(key.capitalize())
-            st.write(value)
+
+    # This button should appear only if there's a summarized transcript to work with
+    if summarized_transcript and st.button("Customize Prompts"):
+        toc_content = generate_toc_content(summarized_transcript, model_choice, progress_bar)
+
+        for section, text in toc_content.items():
+            st.subheader(section)
+            st.write(text)
 
 if __name__ == "__main__":
     main()
-
