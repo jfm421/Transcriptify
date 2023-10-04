@@ -34,7 +34,7 @@ def summarize_text(chunked_text, model, progress_bar):
     return " ".join(summaries)
 
 def generate_toc_content(summary, model, progress_bar):
-    sections = {
+    default_sections = {
         "Introduction": "Provide an introduction based on the summary.",
         "Overview of the project and its objectives": "Extract the overview of the project and its main objectives from the summary.",
         "Research Plan Overview": "Describe the research plan and its origin from initial workshops.",
@@ -51,6 +51,12 @@ def generate_toc_content(summary, model, progress_bar):
         "Conclusion and Next Steps": "Provide a recap of findings and the suggested path forward, mentioning upcoming presentations and deliverables.",
         "Appendix": "Provide details on the original research plan document, detailed interview transcripts, and syntheses."
     }
+
+    # Allow the user to customize prompts
+    sections = {}
+    for section, default_prompt in default_sections.items():
+        custom_prompt = st.text_input(f"Customize the prompt for '{section}':", default_prompt)
+        sections[section] = custom_prompt
 
     content = {}
     keys = list(sections.keys())
@@ -77,8 +83,15 @@ def main():
         "Choose the model:", 
         ["gpt-4", "gpt-4-32k", "gpt-3.5-turbo"]
     )
-    
+
     uploaded_file = st.file_uploader("Upload a transcript text file", type=["txt"])
+
+    if st.button("Customize Prompts"):
+        toc_content = generate_toc_content(summarized_transcript, model_choice, progress_bar)
+
+        for section, text in toc_content.items():
+            st.subheader(section)
+            st.write(text)
     
     if uploaded_file is not None:
         transcript = uploaded_file.read().decode()
