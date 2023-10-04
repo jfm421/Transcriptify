@@ -5,6 +5,9 @@ import openai
 API_KEY = st.secrets["openai"]["api_key"]
 openai.api_key = API_KEY
 
+# Check and display GPT-4 API connection statuses
+gpt4_api_status = "Connected" if check_gpt4_api(API_KEY) else "Not Connected"
+st.write(f"GPT-4 API Status: {gpt4_api_status}")
 
 def chunk_text(text, max_length=4000):
     chunks = []
@@ -22,15 +25,13 @@ def chunk_text(text, max_length=4000):
 def summarize_text(chunked_text, model, progress_bar):
     summaries = []
     for i, chunk in enumerate(chunked_text):
-        messages = [{"role": "user", "content": f"Summarize the following text: {chunk}"}]
-        
-        response = openai.ChatCompletion.create(
+        response = openai.Completion.create(
             model=model,
-            messages=messages
+            prompt=f"Summarize the following text:\n\n{chunk}",
+            max_tokens=200
         )
-        
-        summaries.append(response.choices[0].message['content'].strip())
-        progress_bar.progress((i+1)/len(chunked_text)*0.5)  # 50% of the progress bar for this task
+        summaries.append(response.choices[0].text.strip())
+        progress_bar.progress((i+1)/len(chunked_text)*0.5) # Assign 50% of the progress bar to this task
     return " ".join(summaries)
 
 def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
@@ -45,16 +46,13 @@ def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
     keys = list(prompts.keys())
 
     for i, (key, prompt) in enumerate(prompts.items()):
-        messages = [{"role": "user", "content": f"{prompt} {summary}"}]
-        
-        response = openai.ChatCompletion.create(
+        response = openai.Completion.create(
             model=model,
-            messages=messages
+            prompt=f"{prompt}\n\n{summary}",
+            max_tokens=150
         )
-        
-        results[key] = response.choices[0].message['content'].strip()
+        results[key] = response.choices[0].text.strip()
         progress_bar.progress(0.5 + (i+1)/len(keys)*0.5)  # Remaining 50% of the progress bar
-
     return results
 
 def main():
