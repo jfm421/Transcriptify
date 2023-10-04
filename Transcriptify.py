@@ -33,18 +33,30 @@ def summarize_text(chunked_text, model, progress_bar):
         progress_bar.progress((i+1)/len(chunked_text)*0.5)  # 50% of the progress bar for this task
     return " ".join(summaries)
 
-def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
-    prompts = {
-        "themes": "Identify the key themes from the summary:",
-        "goals": "List the main goals mentioned in the summary:",
-        "challenges": "Highlight the main challenges from the summary:",
-        "pain points": "Point out the pain points based on the summary:"
+def generate_toc_content(summary, model, progress_bar):
+    sections = {
+        "Introduction": "Provide an introduction based on the summary.",
+        "Overview of the project and its objectives": "Extract the overview of the project and its main objectives from the summary.",
+        "Research Plan Overview": "Describe the research plan and its origin from initial workshops.",
+        "Key hypotheses articulated for the study": "Identify the key hypotheses that were articulated for the study from the summary.",
+        "Key Findings and Themes": "Extract the main findings and themes from the summary.",
+        "User-suggested remedies and potential solutions": "Identify user-suggested remedies and potential AI-related solutions from the summary.",
+        "Discussion on collective thoughts and approaches": "Highlight the collective thoughts and approaches from the summary.",
+        "Recommendations": "List the six to eight major themes from user feedback and potential solutions for each problem area, including suggestions for automation.",
+        "Personas and Sales Journey Mapping": "Provide an outline of personas, their goals, challenges, and opportunities, and jobs-to-be-done associated with each role from the summary.",
+        "Staff Roles Involved in the Sales Journey": "Mention the roles involved in the sales journey including Customer Solutions Consultant, Sales Operations Manager, Sales Support Manager, Product Manager, Account Manager, and Customer Relationship Manager.",
+        "Dimensions for Sales Journey Visualisation": "Discuss customer experience highs and lows, data source types, problem statements, tools used, and potential solutions across journey stages.",
+        "Map Governance and Update Process opportunities": "Recommend strategies for maintaining wikis, integrating feedback, and using competitor data.",
+        "User Interface (UI) Prototypes": "Describe preliminary designs for updated Confluence pages and other interfaces.",
+        "Conclusion and Next Steps": "Provide a recap of findings and the suggested path forward, mentioning upcoming presentations and deliverables.",
+        "Appendix": "Provide details on the original research plan document, detailed interview transcripts, and syntheses."
     }
 
-    results = {}
-    keys = list(prompts.keys())
+    content = {}
+    keys = list(sections.keys())
+    progress_increment = 1.0 / len(keys)
 
-    for i, (key, prompt) in enumerate(prompts.items()):
+    for i, (section, prompt) in enumerate(sections.items()):
         messages = [{"role": "user", "content": f"{prompt} {summary}"}]
         
         response = openai.ChatCompletion.create(
@@ -52,10 +64,10 @@ def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
             messages=messages
         )
         
-        results[key] = response.choices[0].message['content'].strip()
-        progress_bar.progress(0.5 + (i+1)/len(keys)*0.5)  # Remaining 50% of the progress bar
+        content[section] = response.choices[0].message['content'].strip()
+        progress_bar.progress((i+1) * progress_increment)
 
-    return results
+    return content
 
 def main():
     st.title('Transcript Analyzer')
