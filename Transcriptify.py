@@ -9,6 +9,15 @@ openai.api_key = API_KEY
 gpt4_api_status = "Connected" if check_gpt4_api(API_KEY) else "Not Connected"
 st.write(f"GPT-4 API Status: {gpt4_api_status}")
 
+def check_gpt4_api(api_key):
+    try:
+        # Assume there's a method to check the connection in the openai library
+        response = openai.api_check(api_key=api_key)
+        return response.status == "ok"
+    except Exception as e:
+        print(f"Failed to check GPT-4 API connection: {e}")
+        return False
+
 def chunk_text(text, max_length=4000):
     chunks = []
     while text:
