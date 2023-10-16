@@ -9,15 +9,6 @@ openai.api_key = API_KEY
 gpt4_api_status = "Connected" if check_gpt4_api(API_KEY) else "Not Connected"
 st.write(f"GPT-4 API Status: {gpt4_api_status}")
 
-def check_gpt4_api(api_key):
-    try:
-        # Assume there's a method to check the connection in the openai library
-        response = openai.api_check(api_key=api_key)
-        return response.status == "ok"
-    except Exception as e:
-        print(f"Failed to check GPT-4 API connection: {e}")
-        return False
-
 def chunk_text(text, max_length=4000):
     chunks = []
     while text:
@@ -34,13 +25,15 @@ def chunk_text(text, max_length=4000):
 def summarize_text(chunked_text, model, progress_bar):
     summaries = []
     for i, chunk in enumerate(chunked_text):
-        response = openai.Completion.create(
+        messages = [{"role": "user", "content": f"Summarize the following text: {chunk}"}]
+        
+        response = openai.ChatCompletion.create(
             model=model,
-            prompt=f"Summarize the following text:\n\n{chunk}",
-            max_tokens=200
+            messages=messages
         )
-        summaries.append(response.choices[0].text.strip())
-        progress_bar.progress((i+1)/len(chunked_text)*0.5) # Assign 50% of the progress bar to this task
+        
+        summaries.append(response.choices[0].message['content'].strip())
+        progress_bar.progress((i+1)/len(chunked_text)*0.5)  # 50% of the progress bar for this task
     return " ".join(summaries)
 
 def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
@@ -55,13 +48,16 @@ def extract_themes_goals_challenges_painpoints(summary, model, progress_bar):
     keys = list(prompts.keys())
 
     for i, (key, prompt) in enumerate(prompts.items()):
-        response = openai.Completion.create(
+        messages = [{"role": "user", "content": f"{prompt} {summary}"}]
+        
+        response = openai.ChatCompletion.create(
             model=model,
-            prompt=f"{prompt}\n\n{summary}",
-            max_tokens=150
+            messages=messages
         )
-        results[key] = response.choices[0].text.strip()
+        
+        results[key] = response.choices[0].message['content'].strip()
         progress_bar.progress(0.5 + (i+1)/len(keys)*0.5)  # Remaining 50% of the progress bar
+
     return results
 
 def main():
