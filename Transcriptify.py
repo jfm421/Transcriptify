@@ -5,21 +5,6 @@ import openai
 API_KEY = st.secrets["openai"]["api_key"]
 openai.api_key = API_KEY
 
-# Check and display GPT-4 API connection statuses
-
-def check_gpt4_api(api_key):
-    try:
-        # Set the API key for OpenAI
-        openai.api_key = api_key
-        # Make a simple API call (e.g., list models)
-        openai.ChatCompletion.list()
-        return True
-    except:
-        return False
-        
-gpt4_api_status = "Connected" if check_gpt4_api(API_KEY) else "Not Connected"
-st.write(f"GPT-4 API Status: {gpt4_api_status}")
-
 def chunk_text(text, max_length=4000):
     chunks = []
     while text:
