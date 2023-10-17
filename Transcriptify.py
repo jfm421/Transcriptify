@@ -21,7 +21,7 @@ def chunk_text(text, max_length=4000):
 def summarize_text(chunked_text, model, progress_bar):
     summaries = []
     for i, chunk in enumerate(chunked_text):
-        messages = [{"role": "user", "content": f"You are an expert in business strategy and enterprise architecture. Identify the subject matter under discussion and the outcomes required in this context, and consider these factors when you summarize the following text: {chunk}"}]
+        messages = [{"role": "user", "content": f"You are an expert in business strategy and enterprise architecture. Take a deep breath and work on this problem step by step. Identify the subject matter under discussion and the outcomes required in this context, and consider these factors when you summarize the following text: {chunk}"}]
         
         response = openai.ChatCompletion.create(
             model=model,
