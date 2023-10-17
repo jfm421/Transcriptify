@@ -35,8 +35,8 @@ def summarize_text(chunked_text, model, progress_bar):
 def extract_themes_information_stakeholders_goals_challenges_opportunities_capabilities(summary, model, progress_bar):
     prompts = {
         "themes": "Identify the key themes from the summary:",
-        "information": "Identify and list the key information concepts and business objects mentioned in the summary",
-        "stakeholders: "Identify the stakeholders and organisations mentioned in the summary:",
+        "information": "List the key information concepts and business objects mentioned in the summary",
+        "stakeholders: "List the stakeholders and organisations mentioned in the summary:",
         "goals": "List the main goals mentioned in the summary:",
         "challenges": "Point out the pain points and challenges based on the summary:"
         "opportunities": "Highlight the opportunities to resolve the pain points from the summary and provide a set of recommendations:",
