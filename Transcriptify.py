@@ -21,7 +21,7 @@ def chunk_text(text, max_length=4000):
 def summarize_text(chunked_text, model, progress_bar):
     summaries = []
     for i, chunk in enumerate(chunked_text):
-        messages = [{"role": "user", "content": f"You are an expert in business strategy and enterprise architecture. Identify the subject matter under dicussion and the outcomes required, and consider these factors when you summarize the following text: {chunk}"}]
+        messages = [{"role": "user", "content": f"You are an expert in business strategy and enterprise architecture. Identify the subject matter under discussion and the outcomes required in this context, and consider these factors when you summarize the following text: {chunk}"}]
         
         response = openai.ChatCompletion.create(
             model=model,
@@ -40,7 +40,7 @@ def extract_themes_information_stakeholders_goals_challenges_opportunities_capab
         "goals": "List the main goals mentioned in the summary:",
         "challenges": "Point out the pain points and challenges based on the summary:",
         "opportunities": "List the opportunities to resolve the challenges from the summary and provide a set of recommendations:",
-        "capabilities": "Where possible infer connections and relate the above datapoints to relevant business capabilities in the bizbok style and provide succinct commentary on the following capability dimensions including human resources - roles and skills, business processes, information and data and technology enablers:", 
+        "capabilities": "Where possible infer connections and relate the above datapoints to relevant business capabilities in the bizbok style and provide succinct commentary on the following capability dimensions including human resources - roles and skills required, business processes required, information and data aspects and technology enablers:", 
     }
 
     results = {}
